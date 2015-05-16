@@ -1,0 +1,41 @@
+;
+#MSG Stuff
+#def dir
+	opo p_throttle, 100
+	mov dir, -1
+!main
+	cmp @0, 80
+	jls !stuck
+	ipo p_rand, ax
+	and ax, maxint
+	mod ax, 4; ax = 0, 1, 2, 3
+	cmp ax, 0
+	je !straight
+	neg dir; Switch direction
+	mov bx, 8
+!quarters
+	mov cx, 4
+!quarters_main
+	cmp @0, 80
+	jls !stuck
+	shl bx, ax
+	mpy bx, dir
+	opo p_steering, bx
+	shr bx, ax
+	mpy bx, dir
+	del bx
+	loop !quarters_main
+	jmp !main
+!stuck
+	opo p_steering, 64
+	del 20
+	opo p_throttle, 100
+	del 40
+	jmp !main
+!straight
+	mov cx, 64
+!straight_main
+	cmp @0, 80
+	jls !stuck
+	loop !straight_main
+	jmp !main

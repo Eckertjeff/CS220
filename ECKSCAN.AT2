@@ -1,0 +1,141 @@
+;
+#MSG Stuff
+!scan
+        opo p_scanarc, 64
+        ipo p_scan, ax
+        cmp ax, 1500 
+        jls !found
+        opo p_trotate, 127
+        ipo p_scan, ax
+        jls !found
+        jgr !scan
+!found
+        ipo p_accuracy, bx
+        cmp bx, -2
+        je !turnfarleft
+        cmp bx, 2
+        je !turnfarright
+        cmp bx, -1
+        je !turnleft
+        cmp bx, 1
+        je !turnright
+!turnfarleft
+        opo p_trotate, -56
+        opo p_scanarc, 8
+        ipo p_scan, ax
+        cmp ax, 1500
+        jgr !scan
+        ipo p_accuracy, bx
+        cmp bx, -2
+        je !turnfarleft2
+        cmp bx, 2
+        je !turnfarright2
+        cmp bx, -1
+        je !turnleft2
+        cmp bx, 1
+        je !turnright2
+!turnfarright
+        opo p_trotate, 56
+        opo p_scanarc, 8
+        ipo p_scan, ax
+        cmp ax, 1500
+        jgr !scan
+        ipo p_accuracy, bx
+        cmp bx, -2
+        je !turnfarleft2
+        cmp bx, 2
+        je !turnfarright2
+        cmp bx, -1
+        je !turnleft2
+        cmp bx, 1
+        je !turnright2
+        jmp !shoot
+!turnleft
+        opo p_trotate, -32
+        opo p_scanarc, 16
+        ipo p_scan, ax
+        cmp ax, 1500
+        jgr !scan
+        ipo p_accuracy, bx
+        cmp bx, -2
+        je !turnfarleft2
+        cmp bx, 2
+        je !turnfarright2
+        cmp bx, -1
+        je !turnleft2
+        cmp bx, 1
+        je !turnright2
+        jmp !shoot
+!turnright
+        opo p_trotate, 32
+        opo p_scanarc, 16
+        ipo p_scan, ax
+        cmp ax, 1500
+        jgr !scan
+        ipo p_accuracy, bx
+        cmp bx, -2
+        je !turnfarleft2
+        cmp bx, 2
+        je !turnfarright2
+        cmp bx, -1
+        je !turnleft2
+        cmp bx, 1
+        je !turnright2
+        jmp !shoot
+!turnfarleft2
+        opo p_trotate, -5
+        jmp !shoot
+!turnfarright2
+        opo p_trotate, 5
+        jmp !shoot
+!turnleft2
+        opo p_trotate, -9
+        opo p_scanarc, 4
+        ipo p_scan, ax
+        cmp ax, 1500
+        jgr !scan
+        ipo p_accuracy, bx
+        cmp bx, 0
+        jls !turnleft3
+        jgr !turnright3
+        jmp !shoot
+
+!turnright2
+        opo p_trotate, 9
+        opo p_scanarc, 4
+        ipo p_scan, ax
+        cmp ax, 1500
+        jgr !scan
+        ipo p_accuracy, bx
+        cmp bx, 0
+        jls !turnleft3
+        jgr !turnright3
+        jmp !shoot
+!turnleft3
+        opo p_trotate, -2
+        jmp !shoot
+!turnright3
+        opo p_trotate, 2
+        jmp !shoot
+!shoot
+
+        opo p_scanarc, 2
+        ipo p_scan, ax
+        ipo p_accuracy, bx
+        ipo p_heat, ex
+        cmp ex, 380
+        jgr !delay
+        opo p_weap, bx
+        opo p_weap, bx
+        opo p_weap, bx
+        ipo p_scan, ax
+        cmp ax, 1500
+        jls !shoot
+        jmp !scan
+!delay
+        ipo p_scan, ax
+        cmp ax, 1500
+        jls !shoot
+        jmp !scan
+
+        
