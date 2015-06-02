@@ -173,7 +173,7 @@ int main(int argc, const char * argv[])
 	scanf("%d", &wpounds);
 	wpounds = int_to_fixed(wpounds);
 	printf("\nHow many real pounds (imagine a 0. first): ");
-	scanf("%s", rp);
+	scanf("%s", rp); //Used a string to get leading zeros ex. .05 pounds.
 	realp = atoi(rp);
 	rpounds = int_to_fixed(realp);
 	rpounds = fixed_div(rpounds, dividen);

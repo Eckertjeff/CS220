@@ -1,0 +1,189 @@
+;
+#MSG It's a Classic.
+#def dir
+	opo p_throttle, 100
+	mov dir, -1
+!scan
+        opo p_scanarc, 64
+        ipo p_scan, ax
+        cmp ax, 1500 
+        jls !found
+        opo p_trotate, 127
+        ipo p_scan, ax
+        jls !found
+        jgr !main_move
+!found
+        ipo p_accuracy, bx
+        cmp bx, -2
+        je !turnfarleft
+        cmp bx, 2
+        je !turnfarright
+        cmp bx, -1
+        je !turnleft
+        cmp bx, 1
+        je !turnright
+!turnfarleft
+        opo p_trotate, -56
+        opo p_scanarc, 8
+        ipo p_scan, ax
+        cmp @0, 80
+        jls !stuck
+        cmp ax, 1500
+        jgr !scan
+        ipo p_accuracy, bx
+        cmp bx, -2
+        je !turnfarleft2
+        cmp bx, 2
+        je !turnfarright2
+        cmp bx, -1
+        je !turnleft2
+        cmp bx, 1
+        je !turnright2
+!turnfarright
+        opo p_trotate, 56
+        opo p_scanarc, 8
+        ipo p_scan, ax
+        cmp @0, 80
+        jls !stuck
+        cmp ax, 1500
+        jgr !scan
+        ipo p_accuracy, bx
+        cmp bx, -2
+        je !turnfarleft2
+        cmp bx, 2
+        je !turnfarright2
+        cmp bx, -1
+        je !turnleft2
+        cmp bx, 1
+        je !turnright2
+        jmp !shoot
+!turnleft
+        opo p_trotate, -32
+        opo p_scanarc, 16
+        ipo p_scan, ax
+        cmp @0, 80
+        jls !stuck
+        cmp ax, 1500
+        jgr !scan
+        ipo p_accuracy, bx
+        cmp bx, -2
+        je !turnfarleft2
+        cmp bx, 2
+        je !turnfarright2
+        cmp bx, -1
+        je !turnleft2
+        cmp bx, 1
+        je !turnright2
+        jmp !shoot
+!turnright
+        opo p_trotate, 32
+        opo p_scanarc, 16
+        ipo p_scan, ax
+        cmp @0, 80
+        jls !stuck
+        cmp ax, 1500
+        jgr !scan
+        ipo p_accuracy, bx
+        cmp bx, -2
+        je !turnfarleft2
+        cmp bx, 2
+        je !turnfarright2
+        cmp bx, -1
+        je !turnleft2
+        cmp bx, 1
+        je !turnright2
+        jmp !shoot
+!turnfarleft2
+        opo p_trotate, -5;og=-5
+        jmp !shoot
+!turnfarright2
+        opo p_trotate, 5 ;og=5
+        jmp !shoot
+!turnleft2
+        opo p_trotate, -9
+        opo p_scanarc, 4
+        ipo p_scan, ax
+        cmp @0, 80
+        jls !stuck
+        cmp ax, 1500
+        jgr !scan
+        ipo p_accuracy, bx
+        cmp bx, 0
+        jls !turnleft3
+        jgr !turnright3
+        jmp !shoot
+
+!turnright2
+        opo p_trotate, 9
+        opo p_scanarc, 4
+        ipo p_scan, ax
+        cmp @0, 80
+        jls !stuck
+        cmp ax, 1500
+        jgr !scan
+        ipo p_accuracy, bx
+        cmp bx, 0
+        jls !turnleft3
+        jgr !turnright3
+        jmp !shoot
+!turnleft3
+        opo p_trotate, -2 ;og=-2
+        jmp !shoot
+!turnright3
+        opo p_trotate, 2 ;og=2
+        jmp !shoot
+!shoot
+
+        opo p_scanarc, 2
+        ipo p_scan, ax
+        ipo p_accuracy, bx
+        ipo p_heat, ex
+        cmp ex, 350
+        jgr !main_move
+        cmp @0, 80
+        jls !stuck
+        opo p_weap, bx
+        sub bx, 2
+        opo p_weap, bx
+        add bx, 4
+        opo p_weap, bx
+        ipo p_scan, ax
+        cmp ax, 1500
+        jls !shoot
+        jmp !main_move
+
+!main_move
+	cmp @0, 80
+	jls !stuck
+	ipo p_rand, dx
+	and dx, maxint
+	mod dx, 3; ax = 0, 1, 2
+	cmp dx, 0
+	je !straight
+	neg dir; Switch direction
+	mov ex, 8
+!quarters
+	mov cx, 4
+!quarters_main
+	cmp @0, 80
+	jls !stuck
+	shl ex, dx
+	mpy ex, dir
+	opo p_steering, ex
+	shr ex, dx
+	mpy ex, dir
+	del ex
+	loop !quarters_main
+	jmp !scan
+!stuck
+	opo p_steering, 64
+	del 20
+	opo p_throttle, 100
+	jmp !scan
+!straight
+	mov cx, 64
+!straight_main
+	cmp @0, 80
+	jls !stuck
+	loop !straight_main
+	jmp !scan

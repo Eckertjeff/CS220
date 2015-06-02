@@ -1,0 +1,153 @@
+; Interesting behaviors at the center grid positions 27, 28, 35, and 36:
+; The robot scans a circle in quarters, then when it gets to position 27
+; it checks to see if all mines have been laid, if they have it detonates them.
+
+#msg stuff
+#config weapon=0
+#config scanner=1
+#config mines=5
+	opo p_throttle, 100
+	opo p_scanarc, 32
+!main
+	int i_locate
+	div ex, 125
+	div fx, 125
+	shl fx, 3 ;multply by 4
+	add ex, fx
+	ipo p_compass, ax
+	jmp ex
+	
+	
+; LEFTs
+:26
+:42
+	opo p_minelayer ;lays mines at above grid positions
+	del 30
+:11
+:12
+:13
+:14
+:25
+:30
+:31
+:41
+:43
+:44
+:45
+:46
+:57
+:58
+:59
+:60
+:61
+:62
+:63
+	mov bx, 192
+	jmp !turn
+	
+; RIGHT
+:18
+:19
+:20
+:21
+:34
+:50
+:51
+:52
+:53
+	opo p_minelayer ;lays mines at above grid positions
+	del 30
+:0
+:2
+:3
+:4
+:5
+:6
+:17
+:32
+:33
+:37
+:38
+:48
+:49
+	mov bx, 64
+	jmp !turn
+	
+; UP
+:8
+:10
+:16
+:22
+:24
+:40
+:54
+:56
+	mov bx,	0
+	jmp !turn
+	
+; DOWN
+:1
+:7
+:9
+:15
+:23
+:29
+:39
+:47
+:55
+	mov bx, 128
+	jmp !turn
+
+;Special_l
+:28
+	mov bx, 192
+	mov cx, 4
+!special_l
+	ipo p_scan, dx
+	opo p_trotate, 64
+	loop !special_l
+	jmp !turn
+
+;Special_u
+:36
+	mov bx, 0
+	mov cx, 4
+!special_u
+	ipo p_scan, dx
+	opo p_trotate, 64
+	loop !special_u
+	jmp !turn
+
+;Special_r
+:35
+	mov bx, 64
+	mov cx, 4
+!special_r
+	ipo p_scan, dx
+	opo p_trotate, 64
+	loop !special_r
+	jmp !turn
+
+;Special_Xplode
+:27
+	mov bx, 192
+	mov cx, 4
+!special_x
+	ipo p_scan, dx
+	opo p_trotate, 64
+	loop !special_x
+	ipo p_minelayer, dx
+	cmp dx, 0
+	jgr !turn
+	opo p_minetrigger
+
+!turn
+	; AX = current dir
+	; BX = target dir
+	sub bx, ax
+	opo p_steering, bx
+	jmp !main
+
+	
+	
+	
